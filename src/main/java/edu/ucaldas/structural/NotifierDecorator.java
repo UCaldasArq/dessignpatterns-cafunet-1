@@ -1,19 +1,34 @@
 package edu.ucaldas.structural;
 
-// TODO: Implementa el patrón Decorator.
-// 1. Crea una clase abstracta NotifierDecorator que implemente Notifier.
-// 2. Debe tener un campo protegido Notifier wrappee y delegar la llamada a send().
-
+// 1. Clase abstracta NotifierDecorator que implementa Notifier.
 public abstract class NotifierDecorator implements Notifier {
-    // TODO: agrega el atributo y constructor.
+    protected Notifier wrappee;
+
+    public NotifierDecorator(Notifier wrappee) {
+        this.wrappee = wrappee;
+    }
 
     @Override
     public String send(String message) {
-        // TODO: delegar la llamada al objeto envuelto.
-        return null;
+        // La lógica central del decorador se mantiene intacta: 
+        // delega la ejecución al objeto que está envolviendo.
+        return wrappee.send(message);
     }
 }
 
-// TODO: Crea la clase SMSNotifier que extienda NotifierDecorator
-// Debe agregar el comportamiento adicional:
-// "SMS enviado: " + message + " | " + resultado_del_email
+// 2. Clase SMSNotifier que extiende NotifierDecorator
+class SMSNotifier extends NotifierDecorator {
+    
+    public SMSNotifier(Notifier wrappee) {
+        super(wrappee);
+    }
+
+    @Override
+    public String send(String message) {
+        // Capturamos el resultado del notificador que está "por debajo" (ej. el Email)
+        String resultadoBase = super.send(message);
+        
+        // Cambiamos el mensaje y usamos String.format para una estructura más limpia
+        return String.format("[Alerta SMS] Texto: '%s' ~~~ (Aviso previo: %s)", message, resultadoBase);
+    }
+}
